@@ -1,0 +1,54 @@
+name: ATM Presentation Generator
+on: [push, workflow_dispatch]
+
+jobs:
+  build-ppt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install PPT Library
+        run: pip install python-pptx
+
+      - name: Generate PowerPoint File
+        run: |
+          python - <<EOF
+          from pptx import Presentation
+          from pptx.util import Inches, Pt
+          
+          prs = Presentation()
+          
+          # Content Data (10 Slides)
+          slides_data = [
+              ("ATM Simulation System (C++)", "Programming Fundamentals\nPresented by: Ahmad Mazhar"),
+              ("Introduction", "• What is an ATM? logic replication.\n• Purpose: Practice C++ structural logic."),
+              ("Project Overview", "• Console-based application.\n• Simulates real-world banking.\n• Simple menu-driven navigation."),
+              ("Objectives", "• PIN Security verification.\n• Balance checking logic.\n• Cash withdrawal transactions."),
+              ("Programming Concepts", "• Variables & Data Types\n• If/Else Statements\n• Switch Cases\n• While Loops"),
+              ("PIN Verification", "• Input: User enters 4-digit PIN.\n• Process: Comparison with stored value.\n• Output: Access Granted/Denied."),
+              ("Menu Options", "• [1] View Balance\n• [2] Withdraw Funds\n• [3] Exit System"),
+              ("Withdrawal Logic", "• User enters amount.\n• System validates current balance.\n• Updates balance after subtraction."),
+              ("Control Flow", "• 'While' loop keeps the session active.\n• 'Switch' handles user choices efficiently."),
+              ("Conclusion", "• Successful implementation of C++ basics.\n• Foundation for real-world banking apps.")
+          ]
+
+          for title_text, body_text in slides_data:
+              slide = prs.slides.add_slide(prs.slide_layouts[1])
+              slide.shapes.title.text = title_text
+              slide.placeholders[1].text = body_text
+
+          prs.save('ATM_Project_Presentation.pptx')
+          EOF
+
+      - name: Save PowerPoint as Downloadable Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Professional-PPT
+          path: ATM_Project_Presentation.pptx
+          
